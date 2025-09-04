@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <!-- Exclude the encrypted database for security -->
+    <exclude domain="database" path="cogninote_database" />
+    <exclude domain="database" path="cogninote_database-shm" />
+    <exclude domain="database" path="cogninote_database-wal" />
+    
+    <!-- Exclude sensitive files -->
+    <exclude domain="sharedpref" path="biometric_prefs.xml" />
+</full-backup-content>

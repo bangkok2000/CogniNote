@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Permissions for core functionality -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
+    <uses-feature android:name="android.hardware.camera.ar" android:required="false" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    
+    <!-- Optional features -->
+    <uses-feature android:name="android.hardware.microphone" android:required="false" />
+    <uses-feature android:name="android.hardware.fingerprint" android:required="false" />
+    <uses-feature android:name="android.hardware.biometrics" android:required="false" />
+
+    <application
+        android:name=".CogniNoteApplication"
+        android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.CogniNote"
+        tools:targetApi="31">
+        
+        <!-- ARCore requirement (optional) -->
+        <meta-data android:name="com.google.ar.core" android:value="optional" />
+        
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.CogniNote"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            
+            <!-- Quick note capture from other apps -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+        
+                            <!-- Quick Note Widget Service -->
+                    <service
+                        android:name=".services.QuickNoteService"
+                        android:enabled="true"
+                        android:exported="false" />
+                    
+                    <!-- Widget Services - temporarily disabled for initial build -->
+                    <!-- 
+                    <service
+                        android:name=".widgets.QuickNoteWidgetService"
+                        android:permission="android.permission.BIND_REMOTEVIEWS" />
+                    
+                    <receiver
+                        android:name=".widgets.QuickNoteWidget"
+                        android:exported="true">
+                        <intent-filter>
+                            <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                        </intent-filter>
+                        <meta-data
+                            android:name="android.appwidget.provider"
+                            android:resource="@xml/quick_note_widget_info" />
+                    </receiver>
+                    
+                    <receiver
+                        android:name=".widgets.QuickNoteListWidget"
+                        android:exported="true">
+                        <intent-filter>
+                            <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                        </intent-filter>
+                        <meta-data
+                            android:name="android.appwidget.provider"
+                            android:resource="@xml/note_list_widget_info" />
+                    </receiver>
+                    -->
+                    
+                    <!-- File Provider for sharing -->
+                    <provider
+                        android:name="androidx.core.content.FileProvider"
+                        android:authorities="${applicationId}.fileprovider"
+                        android:grantUriPermissions="true"
+                        android:exported="false">
+                        <meta-data
+                            android:name="android.support.FILE_PROVIDER_PATHS"
+                            android:resource="@xml/file_paths" />
+                    </provider>
+                        
+                </application>
+
+</manifest>
