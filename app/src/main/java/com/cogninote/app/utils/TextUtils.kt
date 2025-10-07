@@ -2,6 +2,8 @@ package com.cogninote.app.utils
 
 import android.text.Html
 import kotlin.math.ceil
+import java.text.SimpleDateFormat
+import java.util.*
 
 object TextUtils {
     
@@ -137,5 +139,14 @@ object TextUtils {
         }
         
         return "%.1f %s".format(size, units[unitIndex])
+    }
+    
+    /**
+     * Formats timestamp to readable date string
+     */
+    fun formatDate(timestamp: Long): String {
+        val date = Date(timestamp)
+        val formatter = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
+        return formatter.format(date)
     }
 }
