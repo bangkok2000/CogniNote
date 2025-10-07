@@ -135,6 +135,12 @@ dependencies {
     // DataStore for settings
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
+    // PDF Generation
+    implementation("com.itextpdf:itext7-core:8.0.4")
+    implementation("com.itextpdf:layout:8.0.4")
+    implementation("com.itextpdf:bouncy-castle-adapter:8.0.4")
+    implementation("org.slf4j:slf4j-android:1.7.36")
+
     // Testing
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
