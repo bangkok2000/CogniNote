@@ -4,7 +4,7 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import dagger.hilt.android.AndroidEntryPoint
-import com.cogninote.app.data.repository.NoteRepository
+import com.cogninote.app.data.repository.SimplifiedNoteRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -15,7 +15,7 @@ import javax.inject.Inject
 class QuickNoteService : Service() {
 
     @Inject
-    lateinit var noteRepository: NoteRepository
+    lateinit var noteRepository: SimplifiedNoteRepository
 
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
@@ -41,8 +41,7 @@ class QuickNoteService : Service() {
             try {
                 noteRepository.createNote(
                     title = title,
-                    content = content,
-                    tags = listOf("quick-capture")
+                    content = content + " #quick-capture"  // Add tag as hashtag in content
                 )
             } catch (e: Exception) {
                 // Log error or show notification

@@ -99,26 +99,26 @@ dependencies {
     // Coroutines & Flow
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
-    // Biometric Authentication
-    implementation("androidx.biometric:biometric:1.2.0-alpha05")
+    // Biometric Authentication - DISABLED for simplicity
+    // implementation("androidx.biometric:biometric:1.2.0-alpha05")
 
-    // Rich Text Editor - temporarily disabled for stable build
+    // Rich Text Editor - DISABLED for simplicity
     // implementation("com.mohamedrejeb.richeditor:richeditor-compose:1.0.0-rc05")
     
-    // CameraX for OCR
-    implementation("androidx.camera:camera-core:1.3.1")
-    implementation("androidx.camera:camera-camera2:1.3.1")
-    implementation("androidx.camera:camera-lifecycle:1.3.1")
-    implementation("androidx.camera:camera-view:1.3.1")
+    // CameraX for OCR - DISABLED for simplicity
+    // implementation("androidx.camera:camera-core:1.3.1")
+    // implementation("androidx.camera:camera-camera2:1.3.1")
+    // implementation("androidx.camera:camera-lifecycle:1.3.1")
+    // implementation("androidx.camera:camera-view:1.3.1")
 
-    // ML Kit for OCR
-    implementation("com.google.mlkit:text-recognition:16.0.0")
+    // ML Kit for OCR - DISABLED for simplicity
+    // implementation("com.google.mlkit:text-recognition:16.0.0")
     
-    // Permissions handling
-    implementation("com.google.accompanist:accompanist-permissions:0.32.0")
+    // Permissions handling - DISABLED for simplicity
+    // implementation("com.google.accompanist:accompanist-permissions:0.32.0")
     
-    // WorkManager for background tasks
-    implementation("androidx.work:work-runtime-ktx:2.9.0")
+    // WorkManager for background tasks - DISABLED for simplicity  
+    // implementation("androidx.work:work-runtime-ktx:2.9.0")
     
     // AI features - will be enabled after core functionality is stable
     // implementation("org.tensorflow:tensorflow-lite:2.14.0")

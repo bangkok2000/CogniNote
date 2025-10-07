@@ -7,64 +7,47 @@ import com.cogninote.app.data.entities.Note
 @Dao
 interface NoteDao {
 
-    @Query("SELECT * FROM notes WHERE isDeleted = 0 ORDER BY isPinned DESC, updatedAt DESC")
+    // Basic CRUD operations - simplified for daily use
+    @Query("SELECT * FROM notes ORDER BY isPinned DESC, updatedAt DESC")
     fun getAllNotes(): Flow<List<Note>>
 
-    @Query("SELECT * FROM notes WHERE id = :id AND isDeleted = 0")
+    @Query("SELECT * FROM notes WHERE id = :id")
     suspend fun getNoteById(id: String): Note?
 
-    @Query("SELECT * FROM notes WHERE id = :id AND isDeleted = 0")
+    @Query("SELECT * FROM notes WHERE id = :id")
     fun getNoteByIdFlow(id: String): Flow<Note?>
 
+    // Simple search across title and content
     @Query("""
         SELECT * FROM notes 
-        WHERE isDeleted = 0 AND 
-        (title LIKE '%' || :query || '%' OR 
-         content LIKE '%' || :query || '%' OR 
-         plainTextContent LIKE '%' || :query || '%')
+        WHERE (title LIKE '%' || :query || '%' OR 
+               content LIKE '%' || :query || '%' OR 
+               plainTextContent LIKE '%' || :query || '%' OR
+               tags LIKE '%' || :query || '%')
         ORDER BY isPinned DESC, updatedAt DESC
     """)
     fun searchNotes(query: String): Flow<List<Note>>
 
-    @Query("""
-        SELECT * FROM notes 
-        WHERE isDeleted = 0 AND 
-        (tags LIKE '%' || :tag1 || '%' OR tags LIKE '%' || :tag2 || '%' OR tags LIKE '%' || :tag3 || '%' OR tags LIKE '%' || :tag4 || '%' OR tags LIKE '%' || :tag5 || '%')
-        ORDER BY isPinned DESC, updatedAt DESC
-    """)
-    fun getNotesByTags(tag1: String, tag2: String, tag3: String, tag4: String, tag5: String): Flow<List<Note>>
+    // Simple folder filtering (using folder name, not ID)
+    @Query("SELECT * FROM notes WHERE folder = :folderName ORDER BY isPinned DESC, updatedAt DESC")
+    fun getNotesByFolder(folderName: String): Flow<List<Note>>
 
-    @Query("SELECT * FROM notes WHERE folderId = :folderId AND isDeleted = 0 ORDER BY isPinned DESC, updatedAt DESC")
-    fun getNotesByFolder(folderId: String): Flow<List<Note>>
-
-    @Query("SELECT * FROM notes WHERE isPinned = 1 AND isDeleted = 0 ORDER BY updatedAt DESC")
+    @Query("SELECT * FROM notes WHERE isPinned = 1 ORDER BY updatedAt DESC")
     fun getPinnedNotes(): Flow<List<Note>>
 
-    @Query("SELECT * FROM notes WHERE isArchived = 1 AND isDeleted = 0 ORDER BY updatedAt DESC")
-    fun getArchivedNotes(): Flow<List<Note>>
+    // REMOVED for simplicity:
+    // - isDeleted soft delete (just hard delete notes)
+    // - isArchived (archive is feature bloat)
+    // - reminderAt queries (removing reminder complexity)
+    // - complex tag queries (simplified to basic text search)
 
-    @Query("SELECT * FROM notes WHERE isDeleted = 1 ORDER BY updatedAt DESC")
-    fun getDeletedNotes(): Flow<List<Note>>
-
-    @Query("""
-        SELECT * FROM notes 
-        WHERE reminderAt IS NOT NULL AND reminderAt > :currentTime AND isDeleted = 0
-        ORDER BY reminderAt ASC
-    """)
-    fun getNotesWithReminders(currentTime: Long): Flow<List<Note>>
-
-    @Query("""
-        SELECT DISTINCT tags FROM notes 
-        WHERE isDeleted = 0 AND tags != '' AND tags != '[]'
-        ORDER BY tags
-    """)
+    // Extract unique tags from all notes (for search suggestions)
+    @Query("SELECT DISTINCT tags FROM notes WHERE tags != '' AND tags != '[]'")
     fun getAllUsedTags(): Flow<List<String>>
 
+    // Basic operations
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertNote(note: Note)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertNotes(notes: List<Note>)
 
     @Update
     suspend fun updateNote(note: Note)
@@ -72,47 +55,21 @@ interface NoteDao {
     @Delete
     suspend fun deleteNote(note: Note)
 
-    @Query("UPDATE notes SET isDeleted = 1 WHERE id = :id")
-    suspend fun softDeleteNote(id: String)
-
-    @Query("DELETE FROM notes WHERE id = :id")
-    suspend fun hardDeleteNote(id: String)
-
     @Query("UPDATE notes SET isPinned = :isPinned WHERE id = :id")
     suspend fun togglePin(id: String, isPinned: Boolean)
 
-    @Query("UPDATE notes SET isArchived = :isArchived WHERE id = :id")
-    suspend fun toggleArchive(id: String, isArchived: Boolean)
+    @Query("UPDATE notes SET folder = :folderName WHERE id = :id")
+    suspend fun moveToFolder(id: String, folderName: String?)
 
-    @Query("UPDATE notes SET folderId = :folderId WHERE id = :id")
-    suspend fun moveToFolder(id: String, folderId: String?)
-
-    @Query("DELETE FROM notes WHERE isDeleted = 1")
-    suspend fun emptyTrash()
-
-    @Query("UPDATE notes SET isDeleted = 0 WHERE id = :id")
-    suspend fun restoreNote(id: String)
-
-    // Backlink operations
-    @Query("""
-        SELECT * FROM notes 
-        WHERE (id = :backlink1 OR id = :backlink2 OR id = :backlink3 OR id = :backlink4 OR id = :backlink5) AND isDeleted = 0
-    """)
-    fun getBacklinkedNotes(backlink1: String, backlink2: String, backlink3: String, backlink4: String, backlink5: String): Flow<List<Note>>
-
-    @Query("""
-        SELECT * FROM notes 
-        WHERE (id = :outlink1 OR id = :outlink2 OR id = :outlink3 OR id = :outlink4 OR id = :outlink5) AND isDeleted = 0
-    """)
-    fun getOutlinkedNotes(outlink1: String, outlink2: String, outlink3: String, outlink4: String, outlink5: String): Flow<List<Note>>
-
-    // Statistics
-    @Query("SELECT COUNT(*) FROM notes WHERE isDeleted = 0")
+    // Simple statistics for basic info
+    @Query("SELECT COUNT(*) FROM notes")
     fun getTotalNotesCount(): Flow<Int>
 
-    @Query("SELECT COUNT(*) FROM notes WHERE isDeleted = 0 AND DATE(createdAt/1000, 'unixepoch') = DATE('now')")
-    fun getTodayNotesCount(): Flow<Int>
-
-    @Query("SELECT SUM(wordCount) FROM notes WHERE isDeleted = 0")
-    fun getTotalWordCount(): Flow<Int>
+    // REMOVED for simplicity:
+    // - Soft delete system (isDeleted complexity)
+    // - Archive system (isArchived feature bloat)
+    // - Reminder system (reminderAt complexity)
+    // - Backlink/outlink system (advanced linking complexity)
+    // - Word count statistics (analytics bloat)
+    // - Complex batch operations
 }

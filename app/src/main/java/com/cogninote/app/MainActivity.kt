@@ -10,7 +10,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import dagger.hilt.android.AndroidEntryPoint
 import com.cogninote.app.presentation.ui.theme.CogniNoteTheme
-import com.cogninote.app.presentation.ui.CogniNoteApp
+import com.cogninote.app.presentation.ui.NotesnookStyleApp
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -19,14 +19,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         
         setContent {
-            CogniNoteTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    CogniNoteApp()
-                }
-            }
+            // Use Notesnook-style app with custom theming
+            NotesnookStyleApp()
         }
     }
 }

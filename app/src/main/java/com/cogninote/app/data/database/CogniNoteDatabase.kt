@@ -19,18 +19,20 @@ import com.cogninote.app.data.dao.TemplateDao
 import com.cogninote.app.data.dao.TaskDao
 
 @Database(
-    entities = [Note::class, Folder::class, Tag::class, NoteTemplate::class, Task::class],
-    version = 3,
+    entities = [Note::class], // Simplified - only notes
+    version = 4, // Increment version for simplified schema
     exportSchema = false
 )
 @TypeConverters(Converters::class)
 abstract class CogniNoteDatabase : RoomDatabase() {
 
     abstract fun noteDao(): NoteDao
-    abstract fun folderDao(): FolderDao
-    abstract fun tagDao(): TagDao
-    abstract fun templateDao(): TemplateDao
-    abstract fun taskDao(): TaskDao
+    
+    // REMOVED for simplicity:
+    // - folderDao (using simple string folder names)
+    // - tagDao (tags extracted from content automatically)  
+    // - templateDao (using enum-based simple templates)
+    // - taskDao (removing task management complexity)
 
     companion object {
         @Volatile
@@ -57,25 +59,13 @@ abstract class CogniNoteDatabase : RoomDatabase() {
             override fun onCreate(db: SupportSQLiteDatabase) {
                 super.onCreate(db)
                 
-                // Create indexes for better query performance
-                db.execSQL("CREATE INDEX IF NOT EXISTS idx_notes_folder ON notes(folderId)")
-                db.execSQL("CREATE INDEX IF NOT EXISTS idx_notes_created_at ON notes(createdAt)")
+                // Simplified indexes - only what we need for basic search and sorting
                 db.execSQL("CREATE INDEX IF NOT EXISTS idx_notes_updated_at ON notes(updatedAt)")
                 db.execSQL("CREATE INDEX IF NOT EXISTS idx_notes_pinned ON notes(isPinned)")
-                db.execSQL("CREATE INDEX IF NOT EXISTS idx_notes_archived ON notes(isArchived)")
-                db.execSQL("CREATE INDEX IF NOT EXISTS idx_notes_deleted ON notes(isDeleted)")
-                db.execSQL("CREATE INDEX IF NOT EXISTS idx_notes_reminder ON notes(reminderAt)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS idx_notes_folder ON notes(folder)")
                 
-                db.execSQL("CREATE INDEX IF NOT EXISTS idx_folders_parent ON folders(parentFolderId)")
-                db.execSQL("CREATE INDEX IF NOT EXISTS idx_folders_sort ON folders(sortOrder)")
-                
-                db.execSQL("CREATE INDEX IF NOT EXISTS idx_tasks_note ON tasks(noteId)")
-                db.execSQL("CREATE INDEX IF NOT EXISTS idx_tasks_completed ON tasks(isCompleted)")
-                db.execSQL("CREATE INDEX IF NOT EXISTS idx_tasks_due_date ON tasks(dueDate)")
-                db.execSQL("CREATE INDEX IF NOT EXISTS idx_tasks_priority ON tasks(priority)")
-                
-                db.execSQL("CREATE INDEX IF NOT EXISTS idx_tags_usage ON tags(usageCount)")
-                db.execSQL("CREATE INDEX IF NOT EXISTS idx_tags_name ON tags(name)")
+                // Full-text search index on content and title
+                db.execSQL("CREATE INDEX IF NOT EXISTS idx_notes_search ON notes(title, content, plainTextContent)")
             }
         }
 
